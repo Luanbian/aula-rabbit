@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cadastro</title>
+    <link rel="stylesheet" href="index.css" />
+  </head>
+  <body>
+    <main class="card">
+      <h1>Cadastro</h1>
+      <form id="form">
+        <label>
+          Nome
+          <input type="text" name="nome" required />
+        </label>
+        <label>
+          Idade
+          <input type="number" name="idade" min="0" required />
+        </label>
+        <button type="submit">Cadastrar</button>
+      </form>
+
+      <section id="success" class="success" hidden>
+        <p class="success-caption">Usuário criado com sucesso</p>
+        <table class="user-table">
+          <tbody id="user-table-body"></tbody>
+        </table>
+        <button type="button" id="new-user">Cadastrar outro</button>
+      </section>
+
+      <pre id="error" class="result" hidden></pre>
+    </main>
+
+    <div id="overlay" class="overlay" hidden>
+      <div class="spinner"></div>
+    </div>
+
+    <script src="index.js"></script>
+  </body>
+</html>
