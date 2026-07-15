@@ -11,24 +11,19 @@
     <main class="card card-wide">
       <h1>3 requisições, sem fila</h1>
       <p class="subtitle">
-        As tarefas abaixo não têm nenhuma relação entre si. Ainda assim, sem uma
-        fila, o servidor processa uma de cada vez.
+        As 3 tarefas abaixo não têm nenhuma relação entre si e são disparadas ao
+        mesmo tempo. Sem uma fila, o servidor processa uma de cada vez — e a
+        tela fica travada, três vezes seguidas.
       </p>
       <button type="button" id="start">Disparar as 3 requisições</button>
 
-      <table class="task-table">
-        <thead>
-          <tr>
-            <th>Tarefa</th>
-            <th>Status</th>
-            <th>Início</th>
-            <th>Fim</th>
-            <th>Duração</th>
-          </tr>
-        </thead>
-        <tbody id="task-table-body"></tbody>
-      </table>
+      <ul id="resultado" class="resultado"></ul>
     </main>
+
+    <div id="overlay" class="overlay" hidden>
+      <div class="spinner"></div>
+      <p id="overlay-label" class="overlay-label"></p>
+    </div>
 
     <script src="concorrencia.js"></script>
   </body>

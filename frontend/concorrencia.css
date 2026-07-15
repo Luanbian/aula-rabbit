@@ -29,34 +29,26 @@
   cursor: not-allowed;
 }
 
-.task-table {
-  width: 100%;
-  border-collapse: collapse;
+.resultado {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  list-style: none;
+}
+
+.resultado li {
+  padding: 0.6rem 0.8rem;
+  border-radius: 8px;
+  background: #f1f5f9;
+  color: #1e293b;
   font-size: 0.9rem;
 }
 
-.task-table th,
-.task-table td {
-  padding: 0.6rem 0.8rem;
-  text-align: left;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-.task-table th {
-  color: #64748b;
+.overlay-label {
+  margin-top: 1.5rem;
+  padding: 0 1rem;
+  color: #fff;
   font-weight: 600;
-}
-
-.status-pendente {
-  color: #94a3b8;
-}
-
-.status-processando {
-  color: #d97706;
-  font-weight: 600;
-}
-
-.status-concluida {
-  color: #16a34a;
-  font-weight: 600;
+  font-size: 1.1rem;
+  text-align: center;
 }

@@ -1,5 +1,7 @@
 const startButton = document.getElementById("start");
-const taskTableBody = document.getElementById("task-table-body");
+const resultado = document.getElementById("resultado");
+const overlay = document.getElementById("overlay");
+const overlayLabel = document.getElementById("overlay-label");
 
 const TAREFAS = [
   "Enviar newsletter",
@@ -7,63 +9,49 @@ const TAREFAS = [
   "Redimensionar avatar do usuário",
 ];
 
-function criarLinha(tarefa) {
-  const row = document.createElement("tr");
-
-  const nomeCell = document.createElement("td");
-  nomeCell.textContent = tarefa;
-
-  const statusCell = document.createElement("td");
-  statusCell.textContent = "Pendente";
-  statusCell.className = "status-pendente";
-
-  const inicioCell = document.createElement("td");
-  const fimCell = document.createElement("td");
-  const duracaoCell = document.createElement("td");
-
-  row.append(nomeCell, statusCell, inicioCell, fimCell, duracaoCell);
-  taskTableBody.append(row);
-
-  return { statusCell, inicioCell, fimCell, duracaoCell };
-}
-
-function formatarHora(timestamp) {
-  return new Date(timestamp).toLocaleTimeString("pt-BR", {
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-  });
-}
-
-async function dispararTarefa(tarefa, celulas) {
+function dispararTarefa(tarefa) {
   const disparadaEm = Date.now();
-  celulas.statusCell.textContent = "Aguardando o servidor...";
-  celulas.statusCell.className = "status-processando";
-  celulas.inicioCell.textContent = formatarHora(disparadaEm);
 
-  const response = await fetch("http://localhost:3002/tasks", {
+  return fetch("http://localhost:3002/tasks", {
     method: "POST",
     headers: { "Content-Type": "text/plain" },
     body: JSON.stringify({ tarefa }),
-  });
-  await response.json();
-
-  const concluidaEm = Date.now();
-  celulas.statusCell.textContent = "Concluída";
-  celulas.statusCell.className = "status-concluida";
-  celulas.fimCell.textContent = formatarHora(concluidaEm);
-  celulas.duracaoCell.textContent = `${((concluidaEm - disparadaEm) / 1000).toFixed(1)}s`;
+  })
+    .then((response) => response.json())
+    .then(() => ({ tarefa, duracao: (Date.now() - disparadaEm) / 1000 }));
 }
 
-startButton.addEventListener("click", () => {
-  startButton.disabled = true;
-  taskTableBody.replaceChildren();
+function atualizarOverlay(pendentes) {
+  const [proximaTarefa] = pendentes;
+  overlayLabel.textContent = `Carregando... travado pela ${proximaTarefa}`;
+}
 
-  const pendentes = TAREFAS.map((tarefa) =>
-    dispararTarefa(tarefa, criarLinha(tarefa)),
+startButton.addEventListener("click", async () => {
+  startButton.disabled = true;
+  resultado.replaceChildren();
+
+  const pendentes = new Set(TAREFAS);
+  overlay.hidden = false;
+  atualizarOverlay(pendentes);
+
+  const promessas = TAREFAS.map((tarefa) =>
+    dispararTarefa(tarefa).then((concluida) => {
+      pendentes.delete(tarefa);
+
+      const item = document.createElement("li");
+      item.textContent = `${concluida.tarefa} — ${concluida.duracao.toFixed(1)}s`;
+      resultado.append(item);
+
+      if (pendentes.size > 0) {
+        atualizarOverlay(pendentes);
+      }
+
+      return concluida;
+    }),
   );
 
-  Promise.all(pendentes).finally(() => {
-    startButton.disabled = false;
-  });
+  await Promise.all(promessas);
+
+  overlay.hidden = true;
+  startButton.disabled = false;
 });
