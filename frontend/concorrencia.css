@@ -1,0 +1,62 @@
+.card-wide {
+  max-width: 720px;
+}
+
+.subtitle {
+  color: #64748b;
+  font-size: 0.9rem;
+  margin: -0.75rem 0 1.5rem;
+}
+
+#start {
+  padding: 0.8rem 1.2rem;
+  border: none;
+  border-radius: 8px;
+  background: #6366f1;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 1.5rem;
+}
+
+#start:hover {
+  background: #4f46e5;
+}
+
+#start:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+}
+
+.task-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.task-table th,
+.task-table td {
+  padding: 0.6rem 0.8rem;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.task-table th {
+  color: #64748b;
+  font-weight: 600;
+}
+
+.status-pendente {
+  color: #94a3b8;
+}
+
+.status-processando {
+  color: #d97706;
+  font-weight: 600;
+}
+
+.status-concluida {
+  color: #16a34a;
+  font-weight: 600;
+}

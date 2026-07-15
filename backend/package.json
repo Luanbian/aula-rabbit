@@ -5,7 +5,9 @@
   "main": "index.ts",
   "scripts": {
     "dev": "tsx watch index.ts",
-    "start": "tsx index.ts"
+    "start": "tsx index.ts",
+    "dev:concorrencia": "tsx watch concorrencia.ts",
+    "start:concorrencia": "tsx concorrencia.ts"
   },
   "keywords": [],
   "author": "",
