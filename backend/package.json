@@ -7,17 +7,23 @@
     "dev": "tsx watch index.ts",
     "start": "tsx index.ts",
     "dev:concorrencia": "tsx watch concorrencia.ts",
-    "start:concorrencia": "tsx concorrencia.ts"
+    "start:concorrencia": "tsx concorrencia.ts",
+    "dev:producer": "tsx watch producer.ts",
+    "start:producer": "tsx producer.ts",
+    "dev:worker": "tsx watch worker.ts",
+    "start:worker": "tsx worker.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "amqplib": "^2.0.1",
     "express": "^4.19.2",
     "nanoid": "^6.0.0"
   },
   "devDependencies": {
+    "@types/amqplib": "^0.10.8",
     "@types/express": "^4.17.21",
     "tsx": "^4.16.2",
     "typescript": "^5.5.3"

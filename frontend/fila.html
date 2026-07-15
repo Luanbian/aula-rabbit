@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cadastro com fila</title>
+    <link rel="stylesheet" href="index.css" />
+    <link rel="stylesheet" href="fila.css" />
+  </head>
+  <body>
+    <main class="card">
+      <h1>Cadastro (com fila)</h1>
+      <form id="form">
+        <label>
+          Nome
+          <input type="text" name="nome" required />
+        </label>
+        <label>
+          Idade
+          <input type="number" name="idade" min="0" required />
+        </label>
+        <button type="submit">Cadastrar</button>
+      </form>
+
+      <section id="accepted" class="accepted" hidden>
+        <p class="accepted-caption">
+          Cadastro recebido! Processando em segundo plano.
+        </p>
+        <table class="user-table">
+          <tbody id="user-table-body"></tbody>
+        </table>
+        <button type="button" id="new-user">Cadastrar outro</button>
+      </section>
+
+      <pre id="error" class="result" hidden></pre>
+    </main>
+
+    <script src="fila.js"></script>
+  </body>
+</html>

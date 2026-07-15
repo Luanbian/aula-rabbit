@@ -1,0 +1,22 @@
+.accepted {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.accepted-caption {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #2563eb;
+  font-weight: 600;
+}
+
+.accepted-caption::before {
+  content: "⏳";
+  display: grid;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  font-size: 0.9rem;
+}
