@@ -20,3 +20,11 @@
   height: 1.5rem;
   font-size: 0.9rem;
 }
+
+.accepted.concluido .accepted-caption {
+  color: #16a34a;
+}
+
+.accepted.concluido .accepted-caption::before {
+  content: "✅";
+}

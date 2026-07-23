@@ -1,6 +1,7 @@
 const form = document.getElementById("form");
 const error = document.getElementById("error");
 const accepted = document.getElementById("accepted");
+const acceptedCaption = document.getElementById("accepted-caption");
 const userTableBody = document.getElementById("user-table-body");
 const newUserButton = document.getElementById("new-user");
 
@@ -9,7 +10,57 @@ const FIELD_LABELS = {
   nome: "Nome",
   idade: "Idade",
   criadoEm: "Recebido em",
+  concluidoEm: "Processado em",
 };
+
+const TIME_FIELDS = new Set(["criadoEm", "concluidoEm"]);
+
+let polling = null;
+
+function renderUsuario(usuario) {
+  userTableBody.replaceChildren(
+    ...Object.entries(usuario)
+      .filter(([key]) => key !== "status")
+      .map(([key, value]) => {
+        const row = document.createElement("tr");
+        const label = document.createElement("th");
+        label.scope = "row";
+        label.textContent = FIELD_LABELS[key] ?? key;
+        const cell = document.createElement("td");
+        cell.textContent = TIME_FIELDS.has(key)
+          ? new Date(value).toLocaleTimeString("pt-BR")
+          : value;
+        row.append(label, cell);
+        return row;
+      }),
+  );
+
+  const concluido = usuario.status === "concluido";
+  accepted.classList.toggle("concluido", concluido);
+  acceptedCaption.textContent = concluido
+    ? "Cadastro concluído pelo worker!"
+    : "Cadastro recebido! Processando em segundo plano...";
+}
+
+function pararPolling() {
+  if (polling) {
+    clearInterval(polling);
+    polling = null;
+  }
+}
+
+function iniciarPolling(id) {
+  pararPolling();
+  polling = setInterval(async () => {
+    const response = await fetch(`http://localhost:3003/users/${id}`);
+    const usuario = await response.json();
+    renderUsuario(usuario);
+
+    if (usuario.status === "concluido") {
+      pararPolling();
+    }
+  }, 1000);
+}
 
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -31,19 +82,12 @@ form.addEventListener("submit", async (event) => {
 
     const usuario = await response.json();
 
-    userTableBody.replaceChildren(
-      ...Object.entries(usuario).map(([key, value]) => {
-        const row = document.createElement("tr");
-        const label = document.createElement("th");
-        label.scope = "row";
-        label.textContent = FIELD_LABELS[key] ?? key;
-        const cell = document.createElement("td");
-        cell.textContent =
-          key === "criadoEm" ? new Date(value).toLocaleTimeString("pt-BR") : value;
-        row.append(label, cell);
-        return row;
-      }),
-    );
+    if (!response.ok) {
+      throw new Error(usuario.erro ?? "Falha ao cadastrar usuário.");
+    }
+
+    renderUsuario(usuario);
+    iniciarPolling(usuario.id);
 
     form.reset();
     form.hidden = true;
@@ -55,6 +99,7 @@ form.addEventListener("submit", async (event) => {
 });
 
 newUserButton.addEventListener("click", () => {
+  pararPolling();
   accepted.hidden = true;
   form.hidden = false;
 });
