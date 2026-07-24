@@ -28,3 +28,8 @@
 .accepted.concluido .accepted-caption::before {
   content: "✅";
 }
+
+.pending-value {
+  color: #6b7280;
+  font-style: italic;
+}

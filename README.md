@@ -94,11 +94,13 @@ mesmo elas não tendo nenhuma relação entre si.
    ```
 
 4. Abra `frontend/fila.html` e cadastre um usuário. A resposta volta quase
-   instantânea com status "processando" — o processamento de 15s acontece
-   depois, em segundo plano, visível no log do terminal do worker. A tela
-   fica consultando o status a cada segundo e atualiza sozinha para
-   "concluído" assim que o worker termina, mostrando que o cadastro
-   realmente só é finalizado em background.
+   instantânea com status "processando" — nesse momento o cadastro ainda
+   não tem `id` (quem gera o `id` é o worker, só depois de processar), e a
+   tabela mostra "sendo gerado..." no lugar dele. O processamento de 15s
+   acontece em segundo plano, visível no log do terminal do worker. A tela
+   fica consultando o status a cada segundo e atualiza sozinha assim que o
+   worker termina, preenchendo o `id` de verdade e marcando "concluído" —
+   mostrando que o cadastro realmente só é finalizado em background.
 
 Para derrubar o RabbitMQ no final: `docker compose down`.
 

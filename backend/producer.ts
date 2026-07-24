@@ -20,9 +20,10 @@ async function main() {
   canal.consume(QUEUE_CONCLUIDOS, (mensagem) => {
     if (!mensagem) return;
 
-    const { id, concluidoEm } = JSON.parse(mensagem.content.toString());
-    const usuario = cadastros.get(id);
+    const { token, id, concluidoEm } = JSON.parse(mensagem.content.toString());
+    const usuario = cadastros.get(token);
     if (usuario) {
+      usuario.id = id;
       usuario.status = "concluido";
       usuario.concluidoEm = concluidoEm;
     }
@@ -37,18 +38,27 @@ async function main() {
       return;
     }
 
-    const usuario = { id: nanoid(), nome, idade, criadoEm: Date.now(), status: "processando" };
-    cadastros.set(usuario.id, usuario);
+    const token = nanoid();
+    const usuario = {
+      token,
+      id: null,
+      nome,
+      idade,
+      criadoEm: Date.now(),
+      concluidoEm: null,
+      status: "processando",
+    };
+    cadastros.set(token, usuario);
 
-    canal.publish(EXCHANGE, ROUTING_KEY, Buffer.from(JSON.stringify(usuario)), {
+    canal.publish(EXCHANGE, ROUTING_KEY, Buffer.from(JSON.stringify({ token, nome, idade })), {
       persistent: true,
     });
 
     res.status(202).json(usuario);
   });
 
-  app.get("/users/:id", (req, res) => {
-    const usuario = cadastros.get(req.params.id);
+  app.get("/users/:token", (req, res) => {
+    const usuario = cadastros.get(req.params.token);
     if (!usuario) {
       res.status(404).json({ erro: "Cadastro não encontrado." });
       return;

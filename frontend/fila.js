@@ -20,16 +20,20 @@ let polling = null;
 function renderUsuario(usuario) {
   userTableBody.replaceChildren(
     ...Object.entries(usuario)
-      .filter(([key]) => key !== "status")
+      .filter(([key, value]) => key !== "status" && key !== "token" && !(value === null && key !== "id"))
       .map(([key, value]) => {
         const row = document.createElement("tr");
         const label = document.createElement("th");
         label.scope = "row";
         label.textContent = FIELD_LABELS[key] ?? key;
         const cell = document.createElement("td");
-        cell.textContent = TIME_FIELDS.has(key)
-          ? new Date(value).toLocaleTimeString("pt-BR")
-          : value;
+        const idPendente = key === "id" && value === null;
+        cell.textContent = idPendente
+          ? "sendo gerado..."
+          : TIME_FIELDS.has(key)
+            ? new Date(value).toLocaleTimeString("pt-BR")
+            : value;
+        cell.classList.toggle("pending-value", idPendente);
         row.append(label, cell);
         return row;
       }),
@@ -49,10 +53,10 @@ function pararPolling() {
   }
 }
 
-function iniciarPolling(id) {
+function iniciarPolling(token) {
   pararPolling();
   polling = setInterval(async () => {
-    const response = await fetch(`http://localhost:3003/users/${id}`);
+    const response = await fetch(`http://localhost:3003/users/${token}`);
     const usuario = await response.json();
     renderUsuario(usuario);
 
@@ -87,7 +91,7 @@ form.addEventListener("submit", async (event) => {
     }
 
     renderUsuario(usuario);
-    iniciarPolling(usuario.id);
+    iniciarPolling(usuario.token);
 
     form.reset();
     form.hidden = true;

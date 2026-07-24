@@ -1,3 +1,4 @@
+import { nanoid } from "nanoid";
 import { conectar, EXCHANGE, QUEUE, ROUTING_KEY_CONCLUIDO } from "./fila/topologia";
 
 async function main() {
@@ -9,23 +10,24 @@ async function main() {
   canal.consume(QUEUE, async (mensagem) => {
     if (!mensagem) return;
 
-    const usuario = JSON.parse(mensagem.content.toString());
-    if (!usuario.nome) {
-      console.error(`Mensagem descartada: sem "nome" (id: ${usuario.id ?? "desconhecido"})`);
+    const { token, nome } = JSON.parse(mensagem.content.toString());
+    if (!nome) {
+      console.error(`Mensagem descartada: sem "nome" (token: ${token ?? "desconhecido"})`);
       canal.ack(mensagem);
       return;
     }
 
-    console.log(`Processando cadastro de ${usuario.nome}...`);
+    console.log(`Processando cadastro de ${nome}...`);
 
     await new Promise((resolve) => setTimeout(resolve, 15000));
 
-    console.log(`Cadastro de ${usuario.nome} concluído (id: ${usuario.id})`);
+    const id = nanoid();
+    console.log(`Cadastro de ${nome} concluído (id: ${id})`);
 
     canal.publish(
       EXCHANGE,
       ROUTING_KEY_CONCLUIDO,
-      Buffer.from(JSON.stringify({ id: usuario.id, concluidoEm: Date.now() })),
+      Buffer.from(JSON.stringify({ token, id, concluidoEm: Date.now() })),
       { persistent: true },
     );
 
